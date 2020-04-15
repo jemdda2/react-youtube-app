@@ -37,3 +37,19 @@ input.error {
   height: 5px;
   margin-top: -12px;
 }
+
+.duration { 
+  bottom: 0;
+  right:0;
+  position: absolute;
+  margin: 4px; 
+  color: #fff;
+  background-Color: rgba(17, 17, 17, 0.8);
+  opacity: 0.8; 
+  padding: 2px 4px;
+  border-Radius: 2px;
+  letter-Spacing: 0.5px;
+  font-Size: 12px;
+  font-Weight: 500;
+  line-Height: 12px; 
+}

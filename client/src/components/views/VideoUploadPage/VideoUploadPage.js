@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Typography, Button, Form, message, Input, Icon } from 'antd';
+import { Typography, Button, Form, message, Input, Icon, Select } from 'antd';
 import Dropzone from 'react-dropzone';
+import Axios from 'axios';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -30,7 +31,7 @@ function VideoUploadPage() {
         setVideoTitle(e.currentTarget.value);
     }
 
-    const onDexcriptionChange = (e) => {
+    const onDescriptionChange = (e) => {
         setDescription(e.currentTarget.value);
     }
 
@@ -40,6 +41,26 @@ function VideoUploadPage() {
 
     const onCategoryChange = (e) => {
         setCategory(e.currentTarget.value)
+    }
+
+    const onDrop = (files) => {
+
+        let formData = new FormData;
+        const config = {
+            header: {'content-type': 'multipart/form-data'}
+        }
+        formData.append("file", files[0]);
+
+        console.log(files);
+        
+        Axios.post('/api/video/uploadfiles', formData, config)
+            .then(response => {
+                if(response.data.success) {
+                    console.log(response.data);
+                } else {
+                    alert('ビデオアプロードを失敗しました。')
+                }
+            })
     }
 
     return (
@@ -53,9 +74,9 @@ function VideoUploadPage() {
                     {/* Drop zone */}
 
                     <Dropzone
-                        onDrop
-                        multiple
-                        maxSize>
+                        onDrop={onDrop}
+                        multiple={false}
+                        maxSize={100000000}>
                         {({ getRootProps, getInputProps }) => (
                             <div style={{ width: '300px', height: '240px', border: '1px solid lightgray', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             {...getRootProps()}
@@ -84,7 +105,7 @@ function VideoUploadPage() {
                 <br />
                 <label>Description</label>
                 <TextArea 
-                    onChange={onDexcriptionChange}
+                    onChange={onDescriptionChange}
                     value={Description}
                 />
                 <br />

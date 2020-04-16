@@ -36,6 +36,16 @@ router.post('/uploadfiles', (req, res) => {
     })
 })
 
+router.post('/getVideoDetail', (req, res) => {
+
+    Video.findOne({ "_id" : req.body.videoId })
+        .populate('writer')  // populateを使うとwriterのすべでの情報を取得
+        .exec((err, videoDetail) => {
+            if(err) return res.status(400).send(err)
+            return res.status(200).json({ success: true, videoDetail })
+        })
+})
+
 router.post('/uploadVideo', (req, res) => {
 
     //　ビデオ情報をDBへ保存

@@ -38,6 +38,7 @@ router.post('/uploadfiles', (req, res) => {
 
 router.post('/getVideoDetail', (req, res) => {
 
+    // ビデオDetail情報を取得
     Video.findOne({ "_id" : req.body.videoId })
         .populate('writer')  // populateを使うとwriterのすべでの情報を取得
         .exec((err, videoDetail) => {
@@ -48,7 +49,7 @@ router.post('/getVideoDetail', (req, res) => {
 
 router.post('/uploadVideo', (req, res) => {
 
-    //　ビデオ情報をDBへ保存
+    // ビデオ情報をDBへ保存
     const video = new Video(req.body);
 
     video.save((err, doc) => {
@@ -59,7 +60,7 @@ router.post('/uploadVideo', (req, res) => {
 
 router.get('/getVideos', (req, res) => {
 
-    // ビデオ情報をDBから取得し、クライアントへ表示
+    // 全てのビデオ情報をDBから取得し、LandingPageへ表示
     Video.find()
         .populate('writer')
         .exec((err, videos) => {

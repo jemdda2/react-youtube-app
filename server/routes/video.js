@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Video } = require("../models/Video");
+const { Subscriber } = require("../models/Subscriber");
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg");
@@ -68,6 +69,33 @@ router.get('/getVideos', (req, res) => {
             return res.status(200).json({ success: true, videos })
         })
 })
+
+router.post('/getSubscriptionVideos', (req, res) => {
+
+    // ログインユーザーがチャンネル登録したユーザー情報をDBから取得し、SubscriptionPageへ表示
+    // Need to find all of the Users that I am subscribing to From Subscriber Collection 
+    Subscriber.find({ userFrom: req.body.userFrom })
+        .exec((err, subscriberInfo) => {
+            if(err) return res.status(400).send(err);
+
+            // チャンネル登録したユーザー情報をArrayへ
+            let subscribedUser = [];
+            subscriberInfo.map((subscriber, i) => {
+                subscribedUser.push(subscriber.userTo);
+            })
+
+            // Need to Fetch all of the Videos that belong to the Users that I found in previous step. 
+            Video.find({ writer: { $in: subscribedUser }})
+                .populate('writer')
+                .exec((err, videos) => {
+                    if(err) return res.status(400).send(err);
+                    return res.status(200).json({ success: true, videos })
+                })
+        })
+})
+
+
+
 
 router.post('/thumbnail', (req, res) => {
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
-import { response } from 'express';
 
 function Subscribe(props) {
 
@@ -34,20 +33,33 @@ function Subscribe(props) {
         
     }, [])
 
-    const onSubscribe = () => {
+    const unSubscribe = () => {
 
         let subscribedVariable = {
-            userTo: ,
-            
+            userTo: props.userTo,
+            userFrom: props.userFrom
         }
 
         if(Subscribed) {
-            Axios.post('/api/subscribe/onSubscribe')
+            Axios.post('/api/subscribe/unSubscribe', subscribedVariable)
                 .then(response => {
-
+                    if(response.data.success) {
+                        setSubscribeNumber(SubscribeNumber - 1);
+                        setSubscribed(!Subscribed);
+                    } else {
+                        alert('チャンネル取消を失敗しました。');
+                    }
                 })
         } else {
-
+            Axios.post('/api/subscribe/subscribe', subscribedVariable)
+                .then(response => {
+                    if(response.data.success) {
+                        setSubscribeNumber(SubscribeNumber + 1);
+                        setSubscribed(!Subscribed);
+                    } else {
+                        alert('チャンネル登録を失敗しました。');
+                    }
+                })
         }
     }
 
@@ -55,11 +67,11 @@ function Subscribe(props) {
         <div>
             <button
                 style={{
-                    background: `${Subscribe ? '#CC0000' : '#AAAAAA' }`, borderRadius: '4px',
+                    background: `${Subscribed ? '#AAAAAA' : '#CC0000' }`, borderRadius: '4px',
                     color: 'white', padding: '10px 16px',
                     fontWeight: '500', fontSize: '1rem', textTransform: 'uppercase'
                 }}
-                onClick={onSubscribe}
+                onClick={unSubscribe}
             >
                {SubscribeNumber} {Subscribed ? 'Subscribed' : 'Subscribe'}
             </button>

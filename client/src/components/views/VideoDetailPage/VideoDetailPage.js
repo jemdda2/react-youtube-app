@@ -10,6 +10,7 @@ function VideoDetailPage(props) {
     // URLからビデオIDを取得
     const videoId = props.match.params.videoId;
     const [VideoDetail, setVideoDetail] = useState([]);
+    const [CommentLists, setCommentLists] = useState([])
     
     const variable = { 
         videoId: videoId 
@@ -26,7 +27,21 @@ function VideoDetailPage(props) {
                     alert('ビデオ情報の取得を失敗しました。');
                 }
             })
+
+        Axios.post('/api/comment/getComments', variable)
+        .then(response => {
+            if(response.data.success) {
+                console.log(response.data.comments);
+                setCommentLists(response.data.comments);
+            } else {
+                alert('コメント情報の取得を失敗しました。');
+            }
+        })
     }, [])
+
+    const refreshFunction = (newComment) => {
+        setCommentLists(CommentLists.concat(newComment))
+    }
 
     if(VideoDetail.writer) {
 
@@ -50,7 +65,7 @@ function VideoDetailPage(props) {
                             />
                         </List.Item>
 
-                        <Comment postId={videoId} />
+                        <Comment refreshFunction={refreshFunction} CommentLists={CommentLists} postId={videoId} />
                     </div>
 
                 </Col>

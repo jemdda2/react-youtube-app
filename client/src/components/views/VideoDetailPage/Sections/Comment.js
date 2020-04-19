@@ -1,6 +1,7 @@
 import React, { useEffect , useState } from 'react'
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
+import SingleComment from './SingleComment'
 
 function Comment(props) {
 
@@ -26,6 +27,8 @@ function Comment(props) {
             .then(response => {
                 if(response.data.success) {
                     console.log(response.data.result);
+                    setcommentValue("");
+                    props.refreshFunction(response.data.result);
                 } else {
                     alert('コメント保存を失敗しました。');
                 }
@@ -38,13 +41,21 @@ function Comment(props) {
             <p> Replies </p>
             <hr />
 
-            {/* {Comment Lists} */}
+            {/* {Coment Lists} */}
+            {console.log(props.CommentLists)}
+
+            {props.CommentLists && props.CommentLists.map((comment, index) => {
+                return (!comment.responseTo &&
+                    <SingleComment comment={comment} postId={props.postId} refreshFunction={props.refreshFunction} />
+                )
+            })}
+
 
             {/* {Root Comment Form} */}
 
             <form style={{ display: 'flex' }} onSubmit={onSubmit} >
                 <textarea
-                    style={{  width: '100%', borderRadius: '5px'}}
+                    style={{ width: '100%', borderRadius: '5px' }}
                     onChange={handleClick}
                     value={commentValue}
                     placeholder="コメントを入力してください。"                

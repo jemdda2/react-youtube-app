@@ -60,27 +60,85 @@ function LikeDislikes(props) {
                 
     }, [])
 
+    const onLike = () => {
+        if(LikeAction === null) {
+            Axios.post('/api/like/upLike', variable)
+                .then(response => {
+                    if(response.data.success) {
+                        setLikes(Likes + 1);
+                        setLikeAction('liked');
+
+                        if(DisLikeAction !== null) {
+                            setDisLikeAction(null);
+                            setDislikes(Dislikes -1);
+                        }
+                    } else {
+                        alert('LikeUpを失敗しました。')
+                    }
+                })
+        } else {
+            Axios.post('/api/like/unLike', variable)
+                .then(response => {
+                    if(response.data.success) {
+                        setLikes(Likes - 1);
+                        setLikeAction(null);
+                    } else {
+                        alert('LikeDownを失敗しました。')
+                    }
+                })
+        }
+    }
+
+    const onDislike = () => {
+        if(DisLikeAction !== null) {
+            Axios.post('/api/like/unDislike', variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setDislikes(Dislikes - 1);
+                        setDisLikeAction(null);
+                    } else {
+                        alert('Dislikeの削除を失敗しました。');
+                    }
+                })
+        } else {
+            Axios.post('/api/like/upDislike', variable)
+            .then(response => {
+                if (response.data.success) {
+                    setDislikes(Dislikes + 1);
+                    setDisLikeAction('disliked');
+
+                    if(LikeAction !== null) {
+                        setLikeAction(null);
+                        setLikes(Likes -1);
+                    }
+                } else {
+                    alert('Dislikeの削除を失敗しました。');
+                }
+            })
+        }
+    }
+
     return (
         <div>
             <span key="comment-basic-like">
                 <Tooltip title="Like">
                     <Icon type="like"
                         theme={LikeAction === 'liked' ? 'filled' : 'outlined'}
-                        onClick
+                        onClick={onLike}
                     />
                 </Tooltip>
             <span style={{ paddingLeft: '8px', cursor: 'auto' }}> { Likes } </span>
-            </span>
+            </span>&nbsp;&nbsp;
 
             <span key="comment-basic-dislike">
                 <Tooltip title="Dislike">
                     <Icon type="dislike"
                         theme={DisLikeAction === 'disliked' ? 'filled' : 'outlined'}
-                        onClick
+                        onClick={onDislike}
                     />
                 </Tooltip>
             <span style={{ paddingLeft: '8px', cursor: 'auto' }}> { Dislikes } </span>
-            </span>
+            </span>&nbsp;&nbsp;
         </div>
     )
 }

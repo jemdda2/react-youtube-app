@@ -8,14 +8,14 @@ const { TextArea } = Input;
 function SingleComment(props) {
     const user = useSelector(state => state.user);
     const [OpenReply, setOpenReply] = useState(false);
-    const [CommentValue, setCommentValue] = useState("")
+    const [CommentValue, setCommentValue] = useState("");
 
     const onClickReplyOpen = () => {
         setOpenReply(!OpenReply);
     }
 
     const onHandleChange = (e) => {
-        setCommentValue(e.currentTarget.CommentValue);
+        setCommentValue(e.currentTarget.value);
     }
 
     const onSubmit = (e) => {
@@ -33,6 +33,7 @@ function SingleComment(props) {
                 if(response.data.success) {
                     console.log(response.data.result);
                     setCommentValue("");
+                    setOpenReply(false);
                     props.refreshFunction(response.data.result);
                 } else {
                     alert('コメント保存を失敗しました。');

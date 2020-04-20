@@ -2,10 +2,11 @@ import React, { useEffect , useState } from 'react'
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
 import SingleComment from './SingleComment'
+import ReplyComment from './ReplyComment'
+
 
 function Comment(props) {
 
-    const videoId = props.postId;
     const user = useSelector(state => state.user);
     const [commentValue, setcommentValue] = useState("");
 
@@ -20,7 +21,7 @@ function Comment(props) {
         const variables = {
             content: commentValue,
             writer: user.userData._id,
-            postId: videoId
+            postId: props.postId
         }
 
         Axios.post('/api/comment/saveComment', variables)
@@ -44,12 +45,15 @@ function Comment(props) {
             {/* {Coment Lists} */}
             {console.log(props.CommentLists)}
 
-            {props.CommentLists && props.CommentLists.map((comment, index) => {
-                return (!comment.responseTo &&
-                    <SingleComment comment={comment} postId={props.postId} refreshFunction={props.refreshFunction} />
+            {props.CommentLists && props.CommentLists.map((comment, index) => (
+                // responseToがない場合表示
+                (!comment.responseTo &&
+                    <React.Fragment>
+                        <SingleComment comment={comment} postId={props.postId} refreshFunction={props.refreshFunction} />
+                        <ReplyComment CommentLists={props.CommentLists} parentCommentId={comment._id} postId={props.postId} refreshFunction={props.refreshFunction}/>
+                    </React.Fragment>
                 )
-            })}
-
+            ))}
 
             {/* {Root Comment Form} */}
 
